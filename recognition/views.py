@@ -27,7 +27,8 @@ from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from deepface import DeepFace
 from .takeAtt import *
-
+""" from ..attendance.models import Attendance
+ """
 
 
 
@@ -109,8 +110,19 @@ def upload_image(request):
                         """ result =DeepFace.verify(img1_path = p, img2_path = anchor) """                       
                         result = verify_images(p, anchor, model)
                         print(result)
+                        if result == True:
+                            print("yes")
+                            """ attendance = Attendance.objects.create(
+                            roll = roll,
+                            date = datetime.datetime.now(),
+                            cl = "two",
+                            present_status = "present"
+                            ) """
+
+                        else:
+                            print("no")
                     except ValueError as e:
-                        result = False
+                        result = False 
                         print(result)                                             
         os.remove(p)
     
