@@ -1,3 +1,4 @@
+import json
 from random import randint
 
 from django.contrib.auth.models import User
@@ -15,7 +16,7 @@ from django.contrib.auth.decorators import login_required
 
 
 
-@api_view(['POST'])
+""" @api_view(['POST'])
 def create_course(request):
     status = request.data.get('status')
 
@@ -40,12 +41,11 @@ def create_course(request):
     # Lessons
 
     for lesson in request.data.get('lessons'):
-        print("lesson")     
-        print(lesson)     
+              
         if lesson.get('lesson_type') == "ARTICLE":
             type = Lesson.ARTICLE
         elif lesson.get('lesson_type') == "VIDEO":
-            type = Lesson.VIDEO
+            type = Lesson.VIDEO 
 
         tmp_lesson = Lesson.objects.create(
             course=course,
@@ -57,6 +57,78 @@ def create_course(request):
             youtube_id = lesson.get('youtube_id'),       
             status = Lesson.PUBLISHED
         )
+
+    return Response({'course_id': course.id}) """
+
+@api_view(['POST'])
+def create_course(request):
+    status = request.POST.get('status')
+
+    if status == 'published':
+        status = 'draft'
+
+    course = Course.objects.create(
+        title=request.POST.get('title'),
+        slug='%s-%s' % (slugify(request.POST.get('title')), randint(1000, 10000)),
+        short_description=request.POST.get('short_description'),
+        long_description=request.POST.get('long_description'),
+        status=status,
+        image=request.FILES.get('image'),
+        created_by=request.user
+    )
+
+    """ for id in request.POST.getlist('categories'):
+        course.categories.add(id) """
+
+    categories_str = request.POST.get('categories')
+    categories_list = categories_str.split(',')  # Split the string into a list of values
+
+    for id in categories_list:
+        course.categories.add(int(id))  # Convert each value to an integer and add it to the many-to-many field
+        
+        course.save()
+
+    # Lessons
+
+    lessons = json.loads(request.POST.get('lessons'))
+
+    for lesson in lessons:
+              
+        if lesson.get('lesson_type') == "ARTICLE":
+            type = Lesson.ARTICLE
+        elif lesson.get('lesson_type') == "VIDEO":
+            type = Lesson.VIDEO 
+
+        tmp_lesson = Lesson.objects.create(
+            course=course,
+            title=lesson.get('title'),
+            slug=slugify(lesson.get('title')),
+            short_description=lesson.get('short_description'),
+            long_description=lesson.get('long_description'),
+            lesson_type=type,
+            youtube_id=lesson.get('youtube_id'),       
+            status=Lesson.PUBLISHED
+        )
+
+    for quiz in json.loads(request.POST.get('quizes')):
+     
+        lesson = Lesson.objects.create(
+            course=course,
+            title=quiz.get('title'),
+            slug=slugify(quiz.get('title')),
+            lesson_type=Lesson.QUIZ,                
+            status=Lesson.PUBLISHED
+        )
+
+        quiz = Quiz.objects.create(
+            lesson=lesson,
+            question=quiz.get('question'),
+            answer=quiz.get('answer'),
+            op1=quiz.get('op1'),
+            op2=quiz.get('op2'),
+            op3=quiz.get('op3'),
+        )
+    
 
     return Response({'course_id': course.id})
 
