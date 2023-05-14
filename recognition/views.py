@@ -27,8 +27,8 @@ from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from deepface import DeepFace
 from .takeAtt import *
-""" from ..attendance.models import Attendance
- """
+from attendance.models import Attendance
+
 
 
 
@@ -77,6 +77,7 @@ def upload_image(request):
   
     image_data = request.POST.get('image') 
     roll = request.data.get('roll'),
+    Class = request.data.get('class'),
     print(roll[0])
     print(type(image_data))
 
@@ -112,12 +113,14 @@ def upload_image(request):
                         print(result)
                         if result == True:
                             print("yes")
-                            """ attendance = Attendance.objects.create(
-                            roll = roll,
-                            date = datetime.datetime.now(),
-                            cl = "two",
-                            present_status = "present"
-                            ) """
+                            current_date_time = datetime.datetime.now()
+                            """ print(current_date_time)   """                         
+                            attendance = Attendance.objects.create(
+                            roll = roll[0],
+                            date = current_date_time.date(),
+                            cl = Class[0],
+                            present_status = "Present"
+                            )
 
                         else:
                             print("no")
