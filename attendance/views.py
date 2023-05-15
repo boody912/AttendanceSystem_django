@@ -53,7 +53,6 @@ def ad_dashboard_data(request):
     studentfee=models.StudentExtra.objects.filter(status=True).aggregate(Sum('fee',default=0))
     pendingstudentfee=models.StudentExtra.objects.filter(status=False).aggregate(Sum('fee'))
 
-   
 
     data = {
         'teachercount': teachercount,
@@ -212,6 +211,30 @@ def ad_add_student(request):
 def ad_view_students(request):
     students = models.StudentExtra.objects.all().filter(status=True)
     serializer = StudentExtraSerializer(students, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['PUT'])
+@authentication_classes([])
+@permission_classes([])
+def ad_update_student(request, student_id):
+    # Get the student record from the database  
+    student = StudentExtra.objects.get(id=student_id)
+  
+    # Update the student record with the new data from the request
+    student.roll = request.data.get('roll', student.roll)
+    student.mobile = request.data.get('mobile', student.mobile)
+    student.fee = request.data.get('fee', student.fee)
+    student.cl = request.data.get('cl', student.cl)
+    student.first_name = request.data.get('first_name', student.first_name)
+    student.last_name = request.data.get('last_name', student.last_name)
+    if request.FILES.get('image'):
+        student.image = request.FILES.get('image')
+    """ student.status = request.data.get('status', student.status) """
+    student.save()
+
+    # Return a JSON response with the updated student data
+    serializer = StudentExtraSerializer(student)
     return Response(serializer.data)
 
 
