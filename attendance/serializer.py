@@ -19,7 +19,7 @@ class UserGroupSerializer(serializers.ModelSerializer):
 class TeacherExtraSerializer(serializers.ModelSerializer):
     class Meta:
         model=TeacherExtra
-        fields=['first_name','last_name','salary','mobile', 'joindate','status']
+        fields=['id','first_name','last_name','salary','mobile', 'joindate','status']
 
 
 class StudentExtraSerializer(serializers.ModelSerializer):

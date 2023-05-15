@@ -12,9 +12,12 @@ urlpatterns = [
     path('add_student/', views.add_student),
     path('ad_add_student/', views.ad_add_student),
     path('ad_view_students/', views.ad_view_students),
+    path('ad_delete_student/<int:student_id>/', views.ad_delete_student),
 
     path('ad_add_teacher/', views.ad_add_teacher),
     path('ad_view_teachers/', views.ad_view_teachers),
+    path('ad_delete_teacher/<int:teacher_id>/', views.ad_delete_teacher),
+
 
     path('ad_take_attendance/', views.ad_take_attendance),
     path('ad_view_attendance/<str:cl>/<str:date>/', views.ad_view_attendance),

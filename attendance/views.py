@@ -1,4 +1,6 @@
+import statistics
 from django.shortcuts import render,redirect,reverse
+from grpc import Status
 from . import forms,models
 from django.db.models import Sum
 from django.contrib.auth.models import Group
@@ -126,15 +128,24 @@ def ad_view_teachers(request):
     serializer = TeacherExtraSerializer(teachers, many=True)
     return Response(serializer.data)
 
-@api_view(['GET'])
+@api_view(['DELETE'])
 @authentication_classes([])
 @permission_classes([])
-def ad_delete_teachers(request, user_id):
-    teacher=models.TeacherExtra.objects.get(user = user_id)
-    user=models.User.objects.get(id = user_id)
+def ad_delete_teacher(request, teacher_id): 
+    # Get the student object to be deleted
+    try:
+        teacher=models.TeacherExtra.objects.get(id = teacher_id)
+        user=models.User.objects.get(id = teacher.user_id)
+    except teacher.DoesNotExist:
+        return Response(status=404)
+
+    # Delete the student from the database
     user.delete()
     teacher.delete()
-    return Response({'success': True})
+
+    # Return a success response
+    return Response(status=200)
+
 
 
     
@@ -202,6 +213,25 @@ def ad_view_students(request):
     students = models.StudentExtra.objects.all().filter(status=True)
     serializer = StudentExtraSerializer(students, many=True)
     return Response(serializer.data)
+
+
+@api_view(['DELETE'])
+@authentication_classes([])
+@permission_classes([])
+def ad_delete_student(request, student_id): 
+    # Get the student object to be deleted
+    try:
+        student=models.StudentExtra.objects.get(id = student_id)
+        user=models.User.objects.get(id = student.user_id)
+    except student.DoesNotExist:
+        return Response(status=404)
+
+    # Delete the student from the database
+    user.delete()
+    student.delete()
+
+    # Return a success response
+    return Response(status=200)
 
 
 
