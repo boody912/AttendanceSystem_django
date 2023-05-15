@@ -17,6 +17,7 @@ urlpatterns = [
 
     path('ad_add_teacher/', views.ad_add_teacher),
     path('ad_view_teachers/', views.ad_view_teachers),
+    path('ad_update_teacher/<int:teacher_id>/', views.ad_update_teacher),
     path('ad_delete_teacher/<int:teacher_id>/', views.ad_delete_teacher),
 
 

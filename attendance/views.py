@@ -127,6 +127,24 @@ def ad_view_teachers(request):
     serializer = TeacherExtraSerializer(teachers, many=True)
     return Response(serializer.data)
 
+@api_view(['PUT'])
+def ad_update_teacher(request, teacher_id):
+    # Get the teacher record from the database
+    teacher = TeacherExtra.objects.get(id=teacher_id)
+    
+
+    # Update the teacher record with the new data from the request
+    teacher.salary = request.data.get('salary', teacher.salary)
+    teacher.mobile = request.data.get('contact', teacher.mobile)
+    teacher.first_name = request.data.get('first_name', teacher.first_name)
+    teacher.last_name = request.data.get('last_name', teacher.last_name)
+    teacher.save()
+
+    # Return a JSON response with the updated teacher data
+    serializer = TeacherExtraSerializer(teacher)
+    return Response(serializer.data)
+
+
 @api_view(['DELETE'])
 @authentication_classes([])
 @permission_classes([])
