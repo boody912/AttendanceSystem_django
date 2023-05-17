@@ -108,10 +108,10 @@ def upload_image(request):
                     # anchor = preprocess(anchor)
                     # result = siamese_model.predict(list(np.expand_dims([img, anchor], axis=1)))
                     try:
-                        """ result =DeepFace.verify(img1_path = p, img2_path = anchor) """                       
-                        result = verify_images(p, anchor, model)
+                        result =DeepFace.verify(img1_path = p, img2_path = anchor)                         
+                        """ result = verify_images(p, anchor, model) """
                         print(result)
-                        if result == True:
+                        if result['verified'] == True:
                             print("yes")
                             current_date_time = datetime.datetime.now()
                             """ print(current_date_time)   """                         

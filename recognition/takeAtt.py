@@ -60,7 +60,7 @@ def verify_images(img_path1, img_path2, model, threshold=1.3):
 
 def get_model():
     encoder = get_encoder((128, 128, 3))
-    """ encoder.load_weights("C:\\Users\\LENOVO\\Desktop\\AttendanceSystem\\AttendanceSystem_django\\recognition\\Gp1\\encoder") """
+    """ encoder.load_weights("C:\\Users\\LENOVO\\Desktop\\AttendanceSystem\\Gp1\\encoder") """
     """ encoder.load_weights("./recognition/Gp1/encoder") """
     encoder.load_weights("..\\Gp1\\encoder")
     return encoder
@@ -86,12 +86,12 @@ def crop_face(image):
 
 """ model = get_model()
 
-img_path1 = "C:\\Users\\LENOVO\\Desktop\\AttendanceSystem\\AttendanceSystem_django\\recognition\\Gp1\\4.png"
-img_path2 = "C:\\Users\\LENOVO\\Desktop\\AttendanceSystem\\AttendanceSystem_django\\recognition\\Gp1\\6.png"
+img_path1 = "C:\\Users\\LENOVO\\Desktop\\AttendanceSystem\\AttendanceSystem_django\\media\\students\\201900529\\ghandy.png"
+img_path2 = "C:\\Users\\LENOVO\\Desktop\\AttendanceSystem\\Gp1\\IMG-20230508-WA0023.jpg"
 
 result = verify_images(img_path1, img_path2, model)
 
 if result:
     print("The images belong to the same person.")
 else:
-    print("The images belong to different persons.") """
+    print("The images belong to different persons.")  """
