@@ -86,8 +86,8 @@ def upload_image(request):
     captured_image_np = np.frombuffer(captured_image_bytes, dtype=np.uint8)
     captured_image = cv2.imdecode(captured_image_np, cv2.IMREAD_COLOR)
 
-    # Detect faces in the image 
-    captured_image = crop_face(captured_image)
+    # # Detect faces in the image 
+    # captured_image = crop_face(captured_image)
     
     """  and captured_image.shape[0] > 0 """
 
@@ -125,9 +125,9 @@ def upload_image(request):
                         else:
                             print("no")
                     except ValueError as e:
-                        result = False 
+                        result = "no face detected" 
                         print(result)                                             
-        os.remove(p)
+        """ os.remove(p) """
     
         # Save the image to the server or process it in some other way
         return HttpResponse(status=200)
