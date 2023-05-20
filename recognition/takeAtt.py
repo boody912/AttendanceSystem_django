@@ -8,6 +8,133 @@ from tensorflow.keras.applications.inception_v3 import preprocess_input
 
 import tensorflow as tf
 
+import cv2
+# import matplotlib.pyplot as plt
+import os
+from deepface import DeepFace
+import numpy as np
+import cv2
+
+
+def detect_faces(image_path):
+    # Load the input image
+    image = cv2.imread(image_path)
+
+    # Define the path to the Caffe model and prototxt files
+    model_path = ".\\recognition\\face_detection\\res10_300x300_ssd_iter_140000_fp16.caffemodel"
+    prototxt_path = ".\\recognition\\face_detection\\deploy.prototxt"
+
+    # Load the Caffe model and prototxt files
+    net = cv2.dnn.readNetFromCaffe(prototxt_path, model_path)
+
+    # Define the desired output size for the face detection
+    output_size = (300, 300)
+
+    # Preprocess the image for face detection
+    blob = cv2.dnn.blobFromImage(cv2.resize(image, output_size), 1.0, output_size, (104.0, 177.0, 123.0))
+
+    # Pass the preprocessed image through the network to detect faces
+    net.setInput(blob)
+    detections = net.forward()
+
+    # Define the amount of padding to include around each face
+    padding = 0.5
+
+    # Crop and save each face as a separate image
+    cropped_faces = []
+    for i in range(detections.shape[2]):
+        # Extract the confidence score for theface detection
+        confidence = detections[0, 0, i, 2]
+
+        # Only process detections with a high confidence level
+        if confidence > 0.5:
+            # Extract the bounding box coordinates for the face detection
+            box = detections[0, 0, i, 3:7] * np.array([image.shape[1], image.shape[0], image.shape[1], image.shape[0]])
+            (startX, startY, endX, endY) = box.astype("int")
+
+            # Calculate the amount of padding to add
+            padding_x = int((endX - startX) * padding)
+            padding_y = int((endY - startY) * padding)
+
+            # Apply the padding to the cropping coordinates
+            startX -= padding_x
+            startY -= padding_y
+            endX += padding_x
+            endY += padding_y
+
+            # Crop the face and append to`cropped_faces` list
+            cropped_face = image[startY:endY, startX:endX]
+            cropped_faces.append(cropped_face)
+
+    # Return the cropped faces
+    return cropped_faces
+
+
+# def plot_faces(cropped_faces):
+#     # Determine the number of rows and columns to use in the plot
+#     num_faces = len(cropped_faces)
+#     num_rows = int(num_faces**0.5)
+#     num_cols = int(num_faces/num_rows) + 1
+
+#     # Create a figure to display the faces
+#     fig, axes = plt.subplots(nrows=num_rows, ncols=num_cols, figsize=(10,10))
+
+#     # Plot each face in a separate subplot
+#     for i, ax in enumerate(axes.flatten()):
+#         if i < num_faces:
+#             # Convert BGR to RGB color space
+#             face_rgb = cv2.cvtColor(cropped_faces[i], cv2.COLOR_BGR2RGB)
+#             ax.imshow(face_rgb)
+#             ax.axis('off')
+#         else:
+#             ax.axis('off')
+
+#     # Display the plot
+#     # plt.show()
+
+
+
+
+
+def save_images(images, folder_path):
+    # Create the folder if it doesn't exist
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+
+    # Save each image in the folder with the .jpg extension
+    for i, image in enumerate(images):
+        if image is not None and len(image) > 0:
+            file_path = os.path.join(folder_path, f"image_{i}.jpg")
+            cv2.imwrite(file_path, image)
+        else:
+            print(f"Skipping invalid image {i}")
+
+""" def take_multi_att(image_path):
+    shots = "shots"
+    students = "students"
+    attendent_students = []
+    cropped_faces = detect_faces(image_path)
+    # plot_faces(cropped_faces)
+    save_images(cropped_faces, shots)
+
+
+    for shot in os.listdir(shots):
+        shot_path = os.path.join(shots, shot)
+        for student in os.listdir(students):
+            student_path = os.path.join(students, student)
+            try:
+                for student_shot in os.listdir(student_path):
+                    verify_image = os.path.join(student_path, student_shot)
+                    result = DeepFace.verify(img1_path=shot_path, img2_path=verify_image)
+                if(result['distance'] <= 0.25):
+                    attendent_students.append(student)
+                    continue
+            except:
+                continue
+        os.remove(shot_path)
+
+    return attendent_students """
+
 
 def get_encoder(input_shape):
     """ Returns the image encoding model """

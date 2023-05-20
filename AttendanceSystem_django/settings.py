@@ -61,7 +61,6 @@ INSTALLED_APPS = [
     'activity',
     'recognition',
     'multiupload',
-    'channels',
     'widget_tweaks'
 
 ]
@@ -87,12 +86,12 @@ CORS_ALLOW_METHODS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
-ASGI_APPLICATION = 'AttendanceSystem_django.asgi.application'
+""" ASGI_APPLICATION = 'AttendanceSystem_django.asgi.application'
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels.layers.InMemoryChannelLayer',
     },
-}
+} """
 
 
 MIDDLEWARE = [

@@ -12,10 +12,10 @@ from threading import Thread
 
 
 
-from channels.generic.websocket import AsyncWebsocketConsumer
+""" from channels.generic.websocket import AsyncWebsocketConsumer
 import base64
 from io import BytesIO
-from PIL import Image
+from PIL import Image """
 
 import cv2
 import base64
@@ -32,7 +32,7 @@ from attendance.models import Attendance
 
 
 
-class ImageConsumer(AsyncWebsocketConsumer):
+""" class ImageConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
 
@@ -50,7 +50,7 @@ class ImageConsumer(AsyncWebsocketConsumer):
         # Send a response back to the Vue app with recognized faces or other data
         response = {
             'type': 'faces',
-            """ 'data': faces, """
+            """ 'data'"""
             'timestamp': data['timestamp'],
         }
         await self.send(json.dumps(response))
@@ -59,7 +59,7 @@ class ImageConsumer(AsyncWebsocketConsumer):
         image_data = image_data.split(",")[1]
         image_bytes = base64.b64decode(image_data)
         image = Image.open(BytesIO(image_bytes))
-        return image
+        return image """
     
 
 
@@ -70,6 +70,83 @@ def loading_model():
 
 
 model = loading_model()
+
+@api_view(['POST'])
+def take_multi_attend(request):   
+    # Get the uploaded file from the request
+    image_data = request.POST.get('image')
+
+    # preprocess the shot
+    captured_image_bytes = base64.b64decode(image_data.split(',')[1])
+    captured_image_np = np.frombuffer(captured_image_bytes, dtype=np.uint8)
+    captured_image = cv2.imdecode(captured_image_np, cv2.IMREAD_COLOR)
+
+
+    # Save the image using OpenCV
+    cv2.imwrite(".\\media\\shots\\image.jpg", captured_image)
+   
+    shots = ".\\media\\shots"
+    students = ".\\media\\students"
+    attendent_students = []
+    """ cropped_faces = detect_faces(image_data) """
+    # plot_faces(cropped_faces)
+    # save_images(image, shots)
+
+
+    """ for shot in os.listdir(shots):
+        shot_path = os.path.join(shots, shot)
+        for student in os.listdir(students):
+            student_path = os.path.join(students, student)
+            try:
+                for student_shot in os.listdir(student_path):
+                    verify_image = os.path.join(student_path, student_shot)
+                    result = DeepFace.verify(img1_path=shot_path, img2_path=verify_image)
+                if(result['distance'] <= 0.25):
+                    attendent_students.append(student)
+                    continue
+            except:
+                continue
+        os.remove(shot_path) """
+    
+    return HttpResponse(status=200)
+    
+
+@api_view(['POST'])
+def take_multi_att(request):   
+    # Get the uploaded file from the request
+    image_data = request.FILES.get('imagee')
+
+    # Read the image using OpenCV
+    image_array = np.frombuffer(image_data.read(), dtype=np.uint8)
+    image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
+
+    # Save the image using OpenCV
+    # cv2.imwrite(".\\media\\shots\\image.jpg", image)
+   
+    shots = ".\\media\\shots"
+    students = ".\\media\\students"
+    attendent_students = []
+    cropped_faces = detect_faces(image) 
+    save_images(cropped_faces, shots)
+
+
+    """ for shot in os.listdir(shots):
+        shot_path = os.path.join(shots, shot)
+        for student in os.listdir(students):
+            student_path = os.path.join(students, student)
+            try:
+                for student_shot in os.listdir(student_path):
+                    verify_image = os.path.join(student_path, student_shot)
+                    result = DeepFace.verify(img1_path=shot_path, img2_path=verify_image)
+                if(result['distance'] <= 0.25):
+                    attendent_students.append(student)
+                    continue
+            except:
+                continue
+        os.remove(shot_path) """
+    
+    return HttpResponse(status=200)
+    
 
 
 @api_view(['POST'])
@@ -87,10 +164,8 @@ def upload_image(request):
     captured_image = cv2.imdecode(captured_image_np, cv2.IMREAD_COLOR)
 
     # # Detect faces in the image 
-    # captured_image = crop_face(captured_image)
+    captured_image = crop_face(captured_image)
     
-    """  and captured_image.shape[0] > 0 """
-
     if captured_image is not None :
         # Image was captured successfully, process it
         now = datetime.datetime.now()
@@ -127,7 +202,7 @@ def upload_image(request):
                     except ValueError as e:
                         result = "no face detected" 
                         print(result)                                             
-        """ os.remove(p) """
+        os.remove(p)
     
         # Save the image to the server or process it in some other way
         return HttpResponse(status=200)
@@ -138,48 +213,3 @@ def upload_image(request):
 
     
   
-
-
-
-""" global thisframe
-
-@api_view(['POST'])
-@authentication_classes([])
-@permission_classes([])
-def stream_view(request):
-    global thisframe
-    dataURL = request.body
-    # Convert the data URL to a OpenCV image
-    img = cv2.imdecode(np.fromstring(dataURL, np.uint8), cv2.IMREAD_COLOR)
-    # Do something with the image, such as process it or save it to disk
-    # ...
-    thisframe = img
-    
-    return HttpResponse(status=200)
-
-
-@api_view(['POST'])
-def tasks(request):
-    global switch,camera
-    if request.form.get('click') == 'Capture':
-            global capture,this_frame,attended,first_Capture,identefier
-            identefier = request.form['identefier']
-            # this_frame = detect_face(this_frame)
-            now = datetime.datetime.now()
-            p = os.path.sep.join(['shots', "shot_{}.png".format(str(now).replace(":",''))])
-            cv2.imwrite(p, this_frame)
-            try:
-                attended = take_attendance(identefier, p)
-                os.remove(p)
-            except ValueError as e:
-                attended = False
-                os.remove(p)
-            # os.remove(p)
-            first_Capture = True
-                          
-    if(first_Capture & attended):
-        camera.release()
-        cv2.destroyAllWindows()
-        return HttpResponse("lecture.html",id = identefier)
-    else:
-        return HttpResponse('index.html',wrong = "wrong input try again")  """
