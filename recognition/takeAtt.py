@@ -47,7 +47,7 @@ def detect_faces(image_path):
         confidence = detections[0, 0, i, 2]
 
         # Only process detections with a high confidence level
-        if confidence > 0.5:
+        if confidence > 0.2:
             # Extract the bounding box coordinates for the face detection
             box = detections[0, 0, i, 3:7] * np.array([image.shape[1], image.shape[0], image.shape[1], image.shape[0]])
             (startX, startY, endX, endY) = box.astype("int")

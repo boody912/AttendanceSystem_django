@@ -1,5 +1,5 @@
 import json
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 import cv2
 from flask import Response
 import numpy as np
@@ -30,39 +30,6 @@ from .takeAtt import *
 from attendance.models import Attendance
 
 
-
-
-""" class ImageConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        await self.accept()
-
-    async def disconnect(self, close_code):
-        pass
-
-    async def receive(self, text_data):
-        data = json.loads(text_data)
-        image_data = data['data']
-        image = await self.decode_image(image_data)
-
-        # Process the image data using your chosen image processing or face recognition library
-        # ...
-
-        # Send a response back to the Vue app with recognized faces or other data
-        response = {
-            'type': 'faces',
-            """ 'data'"""
-            'timestamp': data['timestamp'],
-        }
-        await self.send(json.dumps(response))
-
-    async def decode_image(self, image_data):
-        image_data = image_data.split(",")[1]
-        image_bytes = base64.b64decode(image_data)
-        image = Image.open(BytesIO(image_bytes))
-        return image """
-    
-
-
 def loading_model():
     m = get_model()
     print("model loaded")
@@ -83,17 +50,17 @@ def take_multi_attend(request):
 
 
     # Save the image using OpenCV
-    cv2.imwrite(".\\media\\shots\\image.jpg", captured_image)
+    cv2.imwrite(".\\media\\temp\\image.jpg", captured_image)
    
     shots = ".\\media\\shots"
+    temp = ".\\media\\temp\\image.jpg"
     students = ".\\media\\students"
     attendent_students = []
-    """ cropped_faces = detect_faces(image_data) """
-    # plot_faces(cropped_faces)
-    # save_images(image, shots)
+    cropped_faces = detect_faces(temp) 
+    save_images(cropped_faces, shots)
 
 
-    """ for shot in os.listdir(shots):
+    for shot in os.listdir(shots):
         shot_path = os.path.join(shots, shot)
         for student in os.listdir(students):
             student_path = os.path.join(students, student)
@@ -101,13 +68,22 @@ def take_multi_attend(request):
                 for student_shot in os.listdir(student_path):
                     verify_image = os.path.join(student_path, student_shot)
                     result = DeepFace.verify(img1_path=shot_path, img2_path=verify_image)
-                if(result['distance'] <= 0.25):
+                if(result['distance'] <= 0.225):
                     attendent_students.append(student)
-                    continue
+                    current_date_time = datetime.datetime.now()
+                    attendance = Attendance.objects.create(
+                            roll = student,
+                            date = current_date_time.date(),
+                            cl = "one",
+                            present_status = "Present"
+                            )
+                    break
             except:
                 continue
-        os.remove(shot_path) """
-    
+        os.remove(shot_path) 
+
+    os.remove(temp) 
+    print(attendent_students)
     return HttpResponse(status=200)
     
 
@@ -121,16 +97,17 @@ def take_multi_att(request):
     image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
 
     # Save the image using OpenCV
-    # cv2.imwrite(".\\media\\shots\\image.jpg", image)
+    cv2.imwrite(".\\media\\temp\\image.jpg", image)
    
     shots = ".\\media\\shots"
+    temp = ".\\media\\temp\\image.jpg"
     students = ".\\media\\students"
     attendent_students = []
-    cropped_faces = detect_faces(image) 
+    cropped_faces = detect_faces(temp) 
     save_images(cropped_faces, shots)
 
 
-    """ for shot in os.listdir(shots):
+    for shot in os.listdir(shots):
         shot_path = os.path.join(shots, shot)
         for student in os.listdir(students):
             student_path = os.path.join(students, student)
@@ -138,13 +115,22 @@ def take_multi_att(request):
                 for student_shot in os.listdir(student_path):
                     verify_image = os.path.join(student_path, student_shot)
                     result = DeepFace.verify(img1_path=shot_path, img2_path=verify_image)
-                if(result['distance'] <= 0.25):
+                if(result['distance'] <= 0.2):
                     attendent_students.append(student)
-                    continue
+                    current_date_time = datetime.datetime.now()
+                    attendance = Attendance.objects.create(
+                            roll = student,
+                            date = current_date_time.date(),
+                            cl = "one",
+                            present_status = "Present"
+                            )
+                    break
             except:
                 continue
-        os.remove(shot_path) """
-    
+        os.remove(shot_path) 
+
+    os.remove(temp) 
+    print(attendent_students)
     return HttpResponse(status=200)
     
 
@@ -164,7 +150,7 @@ def upload_image(request):
     captured_image = cv2.imdecode(captured_image_np, cv2.IMREAD_COLOR)
 
     # # Detect faces in the image 
-    captured_image = crop_face(captured_image)
+    # captured_image = crop_face(captured_image)
     
     if captured_image is not None :
         # Image was captured successfully, process it
@@ -196,14 +182,29 @@ def upload_image(request):
                             cl = Class[0],
                             present_status = "Present"
                             )
-
+                            os.remove(p)
+                            return JsonResponse({
+                                'success': True,
+                                'recognized': True
+                            })
+                            
                         else:
-                            print("no")
+                            print("not recognized")
+                            os.remove(p)
+                            return JsonResponse({
+                                'success': True,
+                                'recognized': False
+                            })
                     except ValueError as e:
+                        print('Error: ', e)
                         result = "no face detected" 
-                        print(result)                                             
-        os.remove(p)
-    
+                        print(result) 
+                        os.remove(p) 
+                        return JsonResponse({
+                                'success': False,
+                                'recognized': False
+                            })                                           
+        os.remove(p)    
         # Save the image to the server or process it in some other way
         return HttpResponse(status=200)
     else:
