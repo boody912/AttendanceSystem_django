@@ -42,6 +42,7 @@ model = loading_model()
 def take_multi_attend(request):   
     # Get the uploaded file from the request
     image_data = request.POST.get('image')
+    Class = request.data.get('class'),
 
     # preprocess the shot
     captured_image_bytes = base64.b64decode(image_data.split(',')[1])
@@ -74,7 +75,7 @@ def take_multi_attend(request):
                     attendance = Attendance.objects.create(
                             roll = student,
                             date = current_date_time.date(),
-                            cl = "one",
+                            cl = Class[0],
                             present_status = "Present"
                             )
                     break
@@ -84,13 +85,17 @@ def take_multi_attend(request):
 
     os.remove(temp) 
     print(attendent_students)
-    return HttpResponse(status=200)
+    return JsonResponse({
+                            'success': True,
+                            'data': attendent_students
+                        })    
     
 
 @api_view(['POST'])
 def take_multi_att(request):   
     # Get the uploaded file from the request
     image_data = request.FILES.get('imagee')
+    Class = request.data.get('class'),
 
     # Read the image using OpenCV
     image_array = np.frombuffer(image_data.read(), dtype=np.uint8)
@@ -114,14 +119,14 @@ def take_multi_att(request):
             try:
                 for student_shot in os.listdir(student_path):
                     verify_image = os.path.join(student_path, student_shot)
-                    result = DeepFace.verify(img1_path=shot_path, img2_path=verify_image)
+                    result = DeepFace.verify(img1_path=shot_path, img2_path=verify_image)                       
                 if(result['distance'] <= 0.2):
                     attendent_students.append(student)
                     current_date_time = datetime.datetime.now()
                     attendance = Attendance.objects.create(
                             roll = student,
                             date = current_date_time.date(),
-                            cl = "one",
+                            cl = Class[0],
                             present_status = "Present"
                             )
                     break
@@ -131,7 +136,10 @@ def take_multi_att(request):
 
     os.remove(temp) 
     print(attendent_students)
-    return HttpResponse(status=200)
+    return JsonResponse({
+                            'success': True,
+                            'data': attendent_students
+                        })    
     
 
 
@@ -174,8 +182,7 @@ def upload_image(request):
                         print(result)
                         if result['verified'] == True:
                             print("yes")
-                            current_date_time = datetime.datetime.now()
-                            """ print(current_date_time)   """                         
+                            current_date_time = datetime.datetime.now()                         
                             attendance = Attendance.objects.create(
                             roll = roll[0],
                             date = current_date_time.date(),
