@@ -4,6 +4,8 @@ import cv2
 from flask import Response
 import numpy as np
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from deepface import DeepFace as verify_image
+
 
 import datetime, time
 import os
@@ -25,7 +27,8 @@ import datetime
 import os
 from django.http import HttpResponse
 from rest_framework.decorators import api_view
-from deepface import DeepFace
+
+
 from .takeAtt import *
 from attendance.models import Attendance
 
@@ -68,7 +71,7 @@ def take_multi_attend(request):
             try:
                 for student_shot in os.listdir(student_path):
                     verify_image = os.path.join(student_path, student_shot)
-                    result = DeepFace.verify(img1_path=shot_path, img2_path=verify_image)
+                    result = verify_image.verify(img1_path=shot_path, img2_path=verify_image)
                 if(result['distance'] <= 0.225):
                     attendent_students.append(student)
                     current_date_time = datetime.datetime.now()
@@ -119,7 +122,7 @@ def take_multi_att(request):
             try:
                 for student_shot in os.listdir(student_path):
                     verify_image = os.path.join(student_path, student_shot)
-                    result = DeepFace.verify(img1_path=shot_path, img2_path=verify_image)                       
+                    result = verify_image.verify(img1_path=shot_path, img2_path=verify_image)                       
                 if(result['distance'] <= 0.2):
                     attendent_students.append(student)
                     current_date_time = datetime.datetime.now()
@@ -177,7 +180,7 @@ def upload_image(request):
                     # anchor = preprocess(anchor)
                     # result = siamese_model.predict(list(np.expand_dims([img, anchor], axis=1)))
                     try:
-                        result =DeepFace.verify(img1_path = p, img2_path = anchor)                         
+                        result = verify_image.verify(img1_path = p, img2_path = anchor)                         
                         """ result = verify_images(p, anchor, model) """
                         print(result)
                         if result['verified'] == True:
