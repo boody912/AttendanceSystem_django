@@ -37,6 +37,14 @@ python -m pip install Pillow
 pip freeze
 pip freeze > requirements.txt
 
+"git command"
+rd .git /S/Q
+git init
+git add .
+git commit -m "initial commit"
+git remote add origin https://github.com/boody912/AttendanceSystem_vue.git
+git push -u origin master
+
 
 
 frontend:
