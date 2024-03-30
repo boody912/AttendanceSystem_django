@@ -1,49 +1,49 @@
-commands:
-django-admin startproject name
-python manage.py startapp course
-python manage.py makemigrations
-python manage.py migrate
-python manage.py createsuperuser
-python manage.py shell
-python scripts/generate_trends.py
+commands:<br />
+django-admin startproject name<br />
+python manage.py startapp course<br />
+python manage.py makemigrations<br />
+python manage.py migrate<br />
+python manage.py createsuperuser<br />
+python manage.py shell<br />
+python scripts/generate_trends.py<br />
 
-dialoge
-popover
-webgbu
+dialoge<br />
+popover<br />
+webgbu<br />
 
 
-"frontend"
-npm init vue@latest
-npm install
-npm run dev
-npm install axios
+"frontend"<br />
+npm init vue@latest<br />
+npm install<br />
+npm run dev<br />
+npm install axios<br />
 
-npm run dev -- --host 127.0.0.1
+npm run dev -- --host 127.0.0.1<br />
 
-for tailwind.css check the website 
-npm install -D tailwindcss postcss autoprefixer
-npx tailwindcss init -p
+for tailwind.css check the website <br />
+npm install -D tailwindcss postcss autoprefixer<br />
+npx tailwindcss init -p<br />
 
-"backend"
-python3 -m venv venv
-pip install django
-pip install django
-pip install django_rest_framework
-pip install djangorestframework-simplejwt
-pip install django-cors-headers
-pip install django-widget-tweaks
-pip install djoser --user
-python -m pip install Pillow
-pip freeze
-pip freeze > requirements.txt
+"backend"<br />
+python3 -m venv venv<br />
+pip install django<br />
+pip install django<br />
+pip install django_rest_framework<br />
+pip install djangorestframework-simplejwt<br />
+pip install django-cors-headers<br />
+pip install django-widget-tweaks<br />
+pip install djoser --user<br />
+python -m pip install Pillow<br />
+pip freeze<br />
+pip freeze > requirements.txt<br />
 
-"git command"
-rd .git /S/Q
-git init
-git add .
-git commit -m "initial commit"
-git remote add origin https://github.com/boody912/AttendanceSystem_vue.git
-git push -u origin master
+"git command"<br />
+rd .git /S/Q<br />
+git init<br />
+git add .<br />
+git commit -m "initial commit"<br />
+git remote add origin https://github.com/boody912/AttendanceSystem_vue.git<br />
+git push -u origin master<br />
 
 
 
