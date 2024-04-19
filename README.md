@@ -6,6 +6,8 @@ python manage.py migrate<br />
 python manage.py createsuperuser<br />
 python manage.py shell<br />
 python scripts/generate_trends.py<br />
+python manage.py runserver<br />
+
 
 dialoge<br />
 popover<br />
