@@ -7,6 +7,8 @@ python manage.py createsuperuser<br />
 python manage.py shell<br />
 python scripts/generate_trends.py<br />
 python manage.py runserver<br />
+pip install -r requirements.txt<br />
+
 
 
 dialoge<br />
