@@ -11,7 +11,7 @@ pip install -r requirements.txt<br />
 docker-compose build<br/>
 docker-compose up --build<br/>
 docker-compose up -d <be/>
-
+docker-compose exec web python manage.py migrate<br/>
 
 
 dialoge<br />
