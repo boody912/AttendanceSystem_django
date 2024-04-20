@@ -8,6 +8,7 @@ python manage.py shell<br />
 python scripts/generate_trends.py<br />
 python manage.py runserver<br />
 pip install -r requirements.txt<br />
+docker-compose build<br/>
 
 
 
