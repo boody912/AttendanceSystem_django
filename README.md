@@ -18,6 +18,8 @@ dialoge<br />
 popover<br />
 webgbu<br />
 
+curl ifconfig.me
+
 
 "frontend"<br />
 npm init vue@latest<br />
